@@ -1,0 +1,75 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root{
+  --color1: #6B6559;
+  --color2: #EEC97E;
+  --color3: #EBDEC4;
+  --color4: #6B5A39;
+  --color5: #B8AD98;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+
+  background-color: var(--color3);
+  text-align: center;
+  font-family: 'Tiro Gurmukhi', serif;
+}
+
+.header{
+  font-family: 'Pacifico', cursive;
+  color: var(--color1);
+  font-size: 4rem;
+  padding-top: 1em;
+}
+
+.booksRead{
+  color: var(--color4);
+  font-size: 2rem;
+  padding-top: 1.4em;
+}
+
+/* Book Container */
+
+.book {
+  background-color: var(--color2);
+  border-radius: 25px;
+  height: 30vh;
+  width: 70vw;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5vh;
+  position: relative;
+}
+
+.book_title {
+  text-align: left;
+  color: var(--color1);
+  font-size: 2em;
+  padding-top: 1em;
+  position: relative;
+  top: 0.6em;
+  left: 6em;
+}
+
+.book_author {
+  text-align: left;
+  position: relative;
+  font-size: 1em;
+  padding-top: 0.5em;
+  top: 0.8em;
+  left: 12em;
+}
+
+.book_cover{
+  text-align: left;
+  position: absolute;
+  left: 2em; top: 3em;
+  height: 100%; width: auto;
+  margin-top: auto; margin-bottom: auto;
+}
