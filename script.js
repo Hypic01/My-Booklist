@@ -33,21 +33,31 @@ const apikey = 'AIzaSyCxbm75J-eq5qXAt6N2bGRvEQM5SUXlI9U';
 
 let bookNum = 0;
 
-const container = document.querySelector('.container'); 
-const booksRead = document.querySelector('#bookNum');
+const book_container = document.querySelector('.book-container'); 
+const booksReadBtn = document.querySelector('.booksRead');
+const booksReadNum = document.querySelector('#bookNum');
+const addBookBtn = document.querySelector('.addBook');
+const addBookForm = document.querySelector('.addBookForm');
+// let allBooks = document.querySelectorAll('.book');
+const addBookSubmit = document.querySelector('.addBookSubmit');
+const inputTitleEl = document.getElementById('bookTitle');
+const inputAuthorEl = document.getElementById('bookAuthor');
 
-const displayBooks = function(cover, title, author){
+let displayed = false;
+
+const displayBooks = function(cover, title, author, display){
+
   const html = `
-      <div class='book'>
-        <div class='book_cover'><img src=${cover}></div>
-        <div class='book_title'>${title}</div>
-        <div class='book_author'>${author}</div>
-        
-      </div>
-    `;
+    <div class='book ${display ? '' : 'hidden'}' id=${title.replace(' ', '')}_${author.split(' ').pop()}>
+      <div class='book_cover'><img src=${cover}></div>
+      <div class='book_title'>${title}</div>
+      <div class='book_author'>${author}</div>
+      
+    </div>
+  `;
 
-  container.insertAdjacentHTML('afterbegin', html);
-}
+  book_container.insertAdjacentHTML('afterbegin', html);
+};
 
 const addBook = async function(title, author){
 
@@ -70,7 +80,7 @@ const addBook = async function(title, author){
     
     
   } catch(err) {    
-    container.insertAdjacentHTML('afterbegin', "Can't find the book! Try again.");
+    // book_container.insertAdjacentHTML('afterbegin', "Can't find the book! Try again.");
     console.error(err);
     return;
   } 
@@ -82,6 +92,7 @@ const addBook = async function(title, author){
       cover: bookCover,
     });
     console.log("book added!");
+    return bookCover;
   } catch (e) {
     console.error("Error adding document: ", e);
   }
@@ -91,17 +102,67 @@ const addBook = async function(title, author){
 // addBook('body keeps the score', 'Bessel van der Kolk');
 
 const readBooks = async function(){
-  const querySnapshot = await getDocs(collection(db, "books"));
+  book_container.innerHTML = '';
+  const querySnapshot = await getDocs(collection(db, "books")); 
   querySnapshot.forEach((doc) => {
     // doc.data() is never undefined for query doc snapshots
     console.log(doc.id, " => ", doc.data());
-    displayBooks(doc.data().cover, doc.data().title, doc.data().author);
-    bookNum++;
-  });
-  booksRead.innerHTML = bookNum;
+    displayBooks(doc.data().cover, doc.data().title, doc.data().author, true);
+    // updateBookNum();
+    // bookNum++;
+  }); 
+  // booksReadNum.innerHTML = bookNum;
 }
 
+const updateBookNum = async function(){
+  const querySnapshot = await getDocs(collection(db, "books"));
+  bookNum = 0;
+  querySnapshot.forEach(() => bookNum++);
+  booksReadNum.innerHTML = bookNum;
+}
+
+booksReadBtn.addEventListener('click', function(){
+  let allBooks = document.querySelectorAll('.book');
+  allBooks.forEach(el => {
+    el.classList.remove('hidden');
+    
+    el.classList.add('appear');
+    el.classList.remove('disappear');
+
+    addBookForm.classList.add('disappear');
+    addBookForm.classList.remove('appear');
+  })
+  // readBooks();
+});
+
+addBookBtn.addEventListener('click', function(){
+  let allBooks = document.querySelectorAll('.book');
+  allBooks.forEach(el => {
+    el.classList.remove('appear');
+    el.classList.add('disappear');
+
+    addBookForm.classList.remove('hidden');
+    addBookForm.classList.remove('disappear');
+    addBookForm.classList.add('appear');
+  })
+});
+
+addBookSubmit.addEventListener('click', async function(){
+  
+  const inputTitle = inputTitleEl.value;
+  const inputAuthor = inputAuthorEl.value;
+
+  try{
+    const inputCover = await addBook(inputTitle, inputAuthor);
+    displayBooks(inputCover, inputTitle, inputAuthor, false);
+    bookNum++;
+    booksReadNum.innerHTML = bookNum;
+  } catch(err) {
+    console.error(err);
+  }
+})
 
 // Default
 readBooks();
+updateBookNum();
 
